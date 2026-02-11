@@ -1,6 +1,7 @@
 package com.thortech.clockr.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,6 +15,9 @@ interface TimeEntryDao {
 
     @Update
     suspend fun updateTimeEntry(timeEntry: TimeEntry)
+
+    @Delete
+    suspend fun deleteTimeEntry(timeEntry: TimeEntry)
 
     @Query("SELECT * FROM time_entries ORDER BY startTime DESC")
     fun getAllTimeEntries(): Flow<List<TimeEntry>>

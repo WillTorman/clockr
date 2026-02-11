@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.thortech.clockr.data.TimeEntry
 import com.thortech.clockr.data.TimeEntryDao
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -28,6 +31,27 @@ class TimeTrackerViewModel(private val timeEntryDao: TimeEntryDao) : ViewModel()
             initialValue = null
         )
 
+    // A ticker flow that emits the current time every second
+    private val ticker = flow {
+        while (true) {
+            emit(System.currentTimeMillis())
+            delay(1000L)
+        }
+    }
+
+    // Combines the running entry and the ticker to provide a live duration
+    val elapsedTime: StateFlow<Long> = combine(runningEntry, ticker) { entry, now ->
+        if (entry != null) {
+            now - entry.startTime
+        } else {
+            0L
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 0L
+    )
+
     fun startTimer(projectName: String = "New Project") {
         viewModelScope.launch {
             // Check if there is already a running entry; if not, start a new one
@@ -47,6 +71,18 @@ class TimeTrackerViewModel(private val timeEntryDao: TimeEntryDao) : ViewModel()
                 val updatedEntry = entry.copy(endTime = System.currentTimeMillis())
                 timeEntryDao.updateTimeEntry(updatedEntry)
             }
+        }
+    }
+
+    fun deleteEntry(entry: TimeEntry) {
+        viewModelScope.launch {
+            timeEntryDao.deleteTimeEntry(entry)
+        }
+    }
+
+    fun updateEntry(entry: TimeEntry) {
+        viewModelScope.launch {
+            timeEntryDao.updateTimeEntry(entry)
         }
     }
 }
