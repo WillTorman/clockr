@@ -1,5 +1,7 @@
 package com.thortech.clockr.ui
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.thortech.clockr.data.TimeEntry
 import java.text.SimpleDateFormat
@@ -91,8 +94,8 @@ fun HomeScreen(
         EditEntryDialog(
             entry = entry,
             onDismiss = { editingEntry = null },
-            onConfirm = { updatedName ->
-                viewModel.updateEntry(entry.copy(projectName = updatedName))
+            onConfirm = { updatedEntry ->
+                viewModel.updateEntry(updatedEntry)
                 editingEntry = null
             }
         )
@@ -150,23 +153,85 @@ fun TimeEntryItem(
 fun EditEntryDialog(
     entry: TimeEntry,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (TimeEntry) -> Unit
 ) {
-    var text by remember { mutableStateOf(entry.projectName) }
+    val context = LocalContext.current
+    var projectName by remember { mutableStateOf(entry.projectName) }
+    var startTime by remember { mutableLongStateOf(entry.startTime) }
+    var endTime by remember { mutableLongStateOf(entry.endTime ?: System.currentTimeMillis()) }
+
+    val dateTimeFormatter = remember { SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault()) }
+
+    fun showDateTimePicker(currentTimestamp: Long, onUpdate: (Long) -> Unit) {
+        val calendar = Calendar.getInstance().apply { timeInMillis = currentTimestamp }
+        DatePickerDialog(
+            context,
+            { _, year, month, day ->
+                TimePickerDialog(
+                    context,
+                    { _, hour, minute ->
+                        val newCalendar = Calendar.getInstance()
+                        newCalendar.set(year, month, day, hour, minute)
+                        onUpdate(newCalendar.timeInMillis)
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true
+                ).show()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Project Name") },
+        title = { Text("Edit Activity") },
         text = {
-            TextField(
-                value = text,
-                onValueChange = { text = it },
-                label = { Text("Project Name") },
-                singleLine = true
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                OutlinedTextField(
+                    value = projectName,
+                    onValueChange = { projectName = it },
+                    label = { Text("Project Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Column {
+                    Text("Start Time", style = MaterialTheme.typography.labelMedium)
+                    OutlinedButton(
+                        onClick = { showDateTimePicker(startTime) { startTime = it } },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(dateTimeFormatter.format(Date(startTime)))
+                    }
+                }
+
+                if (entry.endTime != null) {
+                    Column {
+                        Text("End Time", style = MaterialTheme.typography.labelMedium)
+                        OutlinedButton(
+                            onClick = { showDateTimePicker(endTime) { endTime = it } },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(dateTimeFormatter.format(Date(endTime)))
+                        }
+                    }
+                }
+            }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(text) }) {
+            TextButton(
+                onClick = { 
+                    onConfirm(entry.copy(
+                        projectName = projectName,
+                        startTime = startTime,
+                        endTime = if (entry.endTime != null) endTime else null
+                    ))
+                },
+                enabled = entry.endTime == null || endTime >= startTime
+            ) {
                 Text("Save")
             }
         },
