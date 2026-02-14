@@ -5,7 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -25,13 +25,15 @@ fun SettingsScreen(
     val payRate by viewModel.payRate.collectAsState()
     val workDays by viewModel.workDays.collectAsState()
 
+    var payRateText by remember { mutableStateOf(if (payRate == 0.0) "" else payRate.toString()) }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -47,11 +49,19 @@ fun SettingsScreen(
         ) {
             // Pay Rate
             OutlinedTextField(
-                value = payRate.toString(),
-                onValueChange = { value ->
-                    value.toDoubleOrNull()?.let { viewModel.updatePayRate(it) }
+                value = payRateText,
+                onValueChange = { newValue ->
+                    payRateText = newValue
+                    if (newValue.isEmpty()) {
+                        viewModel.updatePayRate(0.0)
+                    } else {
+                        newValue.toDoubleOrNull()?.let {
+                            viewModel.updatePayRate(it)
+                        }
+                    }
                 },
                 label = { Text("Hourly Pay Rate ($)") },
+                placeholder = { Text("0.0") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -71,7 +81,7 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                DayOfWeek.values().forEach { day ->
+                DayOfWeek.entries.forEach { day ->
                     val dayName = day.name
                     val isSelected = workDays.contains(dayName)
                     FilterChip(
