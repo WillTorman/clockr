@@ -27,6 +27,10 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
         viewModelScope, SharingStarted.WhileSubscribed(5000), System.currentTimeMillis()
     )
 
+    val defaultProjectLabel: StateFlow<String> = repository.defaultProjectLabel.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5000), "New Project"
+    )
+
     fun updatePayPeriodDays(days: Int) {
         viewModelScope.launch { repository.updatePayPeriodDays(days) }
     }
@@ -41,6 +45,10 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
 
     fun updatePayPeriodStartDate(timestamp: Long) {
         viewModelScope.launch { repository.updatePayPeriodStartDate(timestamp) }
+    }
+
+    fun updateDefaultProjectLabel(label: String) {
+        viewModelScope.launch { repository.updateDefaultProjectLabel(label) }
     }
 }
 

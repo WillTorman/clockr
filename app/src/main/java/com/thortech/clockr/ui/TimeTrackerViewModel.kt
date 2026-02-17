@@ -3,17 +3,22 @@ package com.thortech.clockr.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.thortech.clockr.data.SettingsRepository
 import com.thortech.clockr.data.TimeEntry
 import com.thortech.clockr.data.TimeEntryDao
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TimeTrackerViewModel(private val timeEntryDao: TimeEntryDao) : ViewModel() {
+class TimeTrackerViewModel(
+    private val timeEntryDao: TimeEntryDao,
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     // Exposes the list of all time entries
     val allEntries: StateFlow<List<TimeEntry>> = timeEntryDao.getAllTimeEntries()
@@ -52,13 +57,14 @@ class TimeTrackerViewModel(private val timeEntryDao: TimeEntryDao) : ViewModel()
         initialValue = 0L
     )
 
-    fun startTimer(projectName: String = "New Project") {
+    fun startTimer() {
         viewModelScope.launch {
             // Check if there is already a running entry; if not, start a new one
             if (runningEntry.value == null) {
+                val defaultLabel = settingsRepository.defaultProjectLabel.first()
                 val newEntry = TimeEntry(
                     startTime = System.currentTimeMillis(),
-                    projectName = projectName
+                    projectName = defaultLabel
                 )
                 timeEntryDao.insertTimeEntry(newEntry)
             }
@@ -87,11 +93,14 @@ class TimeTrackerViewModel(private val timeEntryDao: TimeEntryDao) : ViewModel()
     }
 }
 
-class TimeTrackerViewModelFactory(private val dao: TimeEntryDao) : ViewModelProvider.Factory {
+class TimeTrackerViewModelFactory(
+    private val dao: TimeEntryDao,
+    private val settingsRepository: SettingsRepository
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TimeTrackerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TimeTrackerViewModel(dao) as T
+            return TimeTrackerViewModel(dao, settingsRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
