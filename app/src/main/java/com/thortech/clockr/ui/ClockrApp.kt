@@ -25,7 +25,7 @@ fun ClockrApp() {
     val settingsRepository = SettingsRepository(context)
     
     val timeViewModel: TimeTrackerViewModel = viewModel(
-        factory = TimeTrackerViewModelFactory(database.timeEntryDao())
+        factory = TimeTrackerViewModelFactory(database.timeEntryDao(), settingsRepository)
     )
     val settingsViewModel: SettingsViewModel = viewModel(
         factory = SettingsViewModelFactory(settingsRepository)

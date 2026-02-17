@@ -24,8 +24,10 @@ fun SettingsScreen(
     val payPeriodDays by viewModel.payPeriodDays.collectAsState()
     val payRate by viewModel.payRate.collectAsState()
     val workDays by viewModel.workDays.collectAsState()
+    val defaultProjectLabel by viewModel.defaultProjectLabel.collectAsState()
 
     var payRateText by remember { mutableStateOf(if (payRate == 0.0) "" else payRate.toString()) }
+    var defaultProjectLabelText by remember(defaultProjectLabel) { mutableStateOf(defaultProjectLabel) }
 
     Scaffold(
         topBar = {
@@ -47,6 +49,19 @@ fun SettingsScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Default Project Label
+            OutlinedTextField(
+                value = defaultProjectLabelText,
+                onValueChange = { newValue ->
+                    defaultProjectLabelText = newValue
+                    viewModel.updateDefaultProjectLabel(newValue)
+                },
+                label = { Text("Default Project Label") },
+                placeholder = { Text("New Project") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
             // Pay Rate
             OutlinedTextField(
                 value = payRateText,

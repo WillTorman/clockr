@@ -16,6 +16,7 @@ class SettingsRepository(private val context: Context) {
         val PAY_RATE = doublePreferencesKey("pay_rate")
         val WORK_DAYS = stringSetPreferencesKey("work_days")
         val PAY_PERIOD_START_DATE = longPreferencesKey("pay_period_start_date")
+        val DEFAULT_PROJECT_LABEL = stringPreferencesKey("default_project_label")
     }
 
     val payPeriodDays: Flow<Int> = context.dataStore.data.map { preferences ->
@@ -32,6 +33,10 @@ class SettingsRepository(private val context: Context) {
 
     val payPeriodStartDate: Flow<Long> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.PAY_PERIOD_START_DATE] ?: System.currentTimeMillis()
+    }
+
+    val defaultProjectLabel: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.DEFAULT_PROJECT_LABEL] ?: "New Project"
     }
 
     suspend fun updatePayPeriodDays(days: Int) {
@@ -55,6 +60,12 @@ class SettingsRepository(private val context: Context) {
     suspend fun updatePayPeriodStartDate(timestamp: Long) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.PAY_PERIOD_START_DATE] = timestamp
+        }
+    }
+
+    suspend fun updateDefaultProjectLabel(label: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DEFAULT_PROJECT_LABEL] = label
         }
     }
 }
