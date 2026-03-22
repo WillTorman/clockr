@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "844185989470",
+    "project_id": "clockr-mobile",
+    "storage_bucket": "clockr-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844185989470:android:c2e046a7a3ec32d0d61fcf",
+        "android_client_info": {
+          "package_name": "com.thortech.clockr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHuELe5LP_PdbWbL-YCje6fAoCML75RfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
