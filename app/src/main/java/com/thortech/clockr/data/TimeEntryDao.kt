@@ -19,9 +19,12 @@ interface TimeEntryDao {
     @Delete
     suspend fun deleteTimeEntry(timeEntry: TimeEntry)
 
-    @Query("SELECT * FROM time_entries ORDER BY startTime DESC")
-    fun getAllTimeEntries(): Flow<List<TimeEntry>>
+    @Query("SELECT * FROM time_entries WHERE userId = :userId ORDER BY startTime DESC")
+    fun getAllTimeEntries(userId: String): Flow<List<TimeEntry>>
 
-    @Query("SELECT * FROM time_entries WHERE endTime IS NULL LIMIT 1")
-    fun getRunningTimeEntry(): Flow<TimeEntry?>
+    @Query("SELECT * FROM time_entries WHERE userId = :userId AND endTime IS NULL LIMIT 1")
+    fun getRunningTimeEntry(userId: String): Flow<TimeEntry?>
+    
+    @Query("SELECT * FROM time_entries WHERE id = :id")
+    suspend fun getTimeEntryById(id: Long): TimeEntry?
 }
