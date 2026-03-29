@@ -1,15 +1,39 @@
+# Built artifacts
+bin/
+gen/
+out/
+build/
+.gradle/
+.kotlin/
+app/build/
+
+# IDE files
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# User-specific / Local config
 local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Firebase / Google Services
+# We keep these out of public repos for extra safety
+app/google-services.json
+
+# Signing files
+*.jks
+*.keystore
+*.p12
+
+# Logs
+*.log
+
+# Sensitive environment variables
+.env
