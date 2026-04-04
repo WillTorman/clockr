@@ -6,6 +6,7 @@ build/
 .gradle/
 .kotlin/
 app/build/
+**/release/
 
 # IDE files
 .idea/
