@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Clockr | Android Time Tracking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Clockr is an Android time tracking app built with Kotlin, Jetpack Compose, and Room for reliable offline-first hour tracking.">
+    <meta name="description" content="Clockr is an Android time tracking app built with Kotlin, Jetpack Compose, Room, Firebase, and DataStore for offline-first tracking with optional cloud sync.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="icon" type="image/svg+xml" href="assets/images/clockr-favicon.svg">
     <style>
@@ -425,8 +425,8 @@
             <section class="hero">
                 <div class="panel hero-copy">
                     <div class="eyebrow">Android time tracking</div>
-                    <h1>Track hours with less page and less friction.</h1>
-                    <p>Clockr is a Kotlin Android app for offline-first hour tracking with a foreground-service timer, editable work entries, and a compact stats flow for pay-period visibility.</p>
+                    <h1>Track hours fast, online or offline.</h1>
+                    <p>Clockr is a Kotlin Android app for offline-first time tracking with Room, foreground-service timers, anonymous Firebase sign-in, Firestore sync, and a compact stats flow for pay-period visibility.</p>
                     <div class="hero-actions">
                         <a class="button" href="https://play.google.com/store/apps/details?id=com.thortech.clockr&amp;pcampaignid=web_share" target="_blank" rel="noreferrer" aria-label="Get Clockr on Google Play">
                             <i class="fa-brands fa-google-play" aria-hidden="true"></i>
@@ -439,6 +439,10 @@
                         <div class="metric">
                             <strong>Offline-first</strong>
                             <span>Room-backed local storage.</span>
+                        </div>
+                        <div class="metric">
+                            <strong>Cloud sync</strong>
+                            <span>Firestore keeps entries backed up.</span>
                         </div>
                         <div class="metric">
                             <strong>Live timer</strong>
@@ -457,20 +461,23 @@
 
                 <aside class="panel hero-side">
                     <div class="stack-card">
-                        <h2>Current app attributes</h2>
+                        <h2>Technology stack</h2>
                         <ul>
-                            <li>Kotlin, Jetpack Compose, Room, and MVVM architecture.</li>
-                            <li>Foreground timer flow with start and stop tracking.</li>
-                            <li>Settings for default project label, pay rate, pay period, and work days.</li>
-                            <li>Stats screen for pay-period totals and estimated earnings.</li>
+                            <li>Kotlin + Jetpack Compose UI with a clean MVVM architecture.</li>
+                            <li>Room for local persistence and DataStore for user settings.</li>
+                            <li>Firebase Auth for anonymous sign-in and user-scoped data.</li>
+                            <li>Cloud Firestore sync for cross-device backup and restore.</li>
+                            <li>Coroutines and Flow for reactive state and async operations.</li>
                         </ul>
                     </div>
                     <div class="stack-card">
-                        <h2>Core flow</h2>
+                        <h2>Product capabilities</h2>
                         <ul>
-                            <li>Start work fast from the home screen.</li>
-                            <li>Review and edit logged entries.</li>
-                            <li>Check earnings without leaving the app flow.</li>
+                            <li>Start and stop shifts quickly from the home screen.</li>
+                            <li>Track active sessions with a foreground-service timer.</li>
+                            <li>Edit or clean up logged entries at any time.</li>
+                            <li>Configure default project, pay rate, pay period, and work days.</li>
+                            <li>Review pay-period totals, session counts, and estimated gross pay.</li>
                         </ul>
                     </div>
                 </aside>
@@ -479,22 +486,34 @@
             <section id="features" class="panel compact-section">
                 <div class="section-heading">
                     <div>
-                        <h2>Current build</h2>
-                        <p>The landing page reflects the app features already present in the Android project.</p>
+                        <h2>Feature highlights</h2>
+                        <p>Built for reliable daily tracking with a practical blend of local-first and cloud-backed workflows.</p>
                     </div>
                 </div>
                 <div class="features-grid">
                     <article class="feature-card">
-                        <h3>Timer control</h3>
-                        <p>Clock in and out with a single primary action and a visible active project.</p>
+                        <h3>Live shift timer</h3>
+                        <p>Clock in and out with one primary action while the foreground service keeps timing active and visible.</p>
                     </article>
                     <article class="feature-card">
-                        <h3>Entry management</h3>
-                        <p>Edit or delete logged sessions when the workday needs cleanup.</p>
+                        <h3>Smart history editing</h3>
+                        <p>Review past sessions and update project names, start times, end times, or remove entries when needed.</p>
                     </article>
                     <article class="feature-card">
-                        <h3>Pay visibility</h3>
-                        <p>Review pay-period hours and estimated gross pay from the stats screen.</p>
+                        <h3>Cloud-backed data</h3>
+                        <p>Room stores entries locally first, then Firestore sync keeps your data available across installs and devices.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Anonymous auth</h3>
+                        <p>Automatic anonymous sign-in secures user-scoped cloud data without adding account setup friction.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Configurable settings</h3>
+                        <p>Set default project labels, pay rates, pay periods, and work days to match your routine.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Pay-period insights</h3>
+                        <p>See total hours, entry counts, and estimated gross pay in a focused stats screen.</p>
                     </article>
                 </div>
             </section>
@@ -561,7 +580,7 @@
                 <div class="section-heading">
                     <div>
                         <h2>Links</h2>
-                        <p>GitHub is live now. The demo link stays as a placeholder until you add the final YouTube URL.</p>
+                        <p>Install Clockr, explore the source code, or watch a quick app walkthrough.</p>
                     </div>
                 </div>
                 <div class="resources-grid">
@@ -572,7 +591,7 @@
                     </article>
                     <article class="resource-card">
                         <h3>GitHub repository</h3>
-                        <p>Browse the Android source for the timer flow, Compose UI, Room data layer, settings, and stats.</p>
+                        <p>Browse the Android source for Compose UI, MVVM structure, Room + Firestore data flow, settings, and stats.</p>
                         <a href="https://github.com/WillTorman/clockr" target="_blank" rel="noreferrer">Open the Clockr repo</a>
                     </article>
                     <article class="resource-card">
@@ -605,7 +624,7 @@
             </section>
         </main>
 
-        <p class="footer-note">Clockr keeps the page focused on the current Android app: reliable time tracking, practical settings, and clear earnings visibility.</p>
+        <p class="footer-note">Clockr combines a modern Android stack with practical time tracking: local-first reliability, cloud sync, and clear earnings visibility.</p>
     </div>
 </body>
 </html>
