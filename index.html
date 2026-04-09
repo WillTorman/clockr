@@ -5,6 +5,8 @@
     <title>Clockr | Android Time Tracking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Clockr is an Android time tracking app built with Kotlin, Jetpack Compose, and Room for reliable offline-first hour tracking.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" referrerpolicy="no-referrer">
+    <link rel="icon" type="image/svg+xml" href="assets/images/clockr-favicon.svg">
     <style>
         :root {
             --bg: #060913;
@@ -193,6 +195,12 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--line);
             color: var(--text);
+        }
+
+        .button .fa-google-play {
+            margin-right: 8px;
+            font-size: 1rem;
+            line-height: 1;
         }
 
         .hero-metrics,
@@ -420,7 +428,11 @@
                     <h1>Track hours with less page and less friction.</h1>
                     <p>Clockr is a Kotlin Android app for offline-first hour tracking with a foreground-service timer, editable work entries, and a compact stats flow for pay-period visibility.</p>
                     <div class="hero-actions">
-                        <a class="button" href="#screenshots">See screenshots</a>
+                        <a class="button" href="https://play.google.com/store/apps/details?id=com.thortech.clockr&amp;pcampaignid=web_share" target="_blank" rel="noreferrer" aria-label="Get Clockr on Google Play">
+                            <i class="fa-brands fa-google-play" aria-hidden="true"></i>
+                            <span>Get it on Google Play</span>
+                        </a>
+                        <a class="button-secondary" href="#screenshots">See screenshots</a>
                         <a class="button-secondary" href="https://github.com/WillTorman/clockr" target="_blank" rel="noreferrer">GitHub repo</a>
                     </div>
                     <div class="hero-metrics">
@@ -553,6 +565,11 @@
                     </div>
                 </div>
                 <div class="resources-grid">
+                    <article class="resource-card">
+                        <h3>Google Play Store</h3>
+                        <p>Install Clockr from Google Play.</p>
+                        <a href="https://play.google.com/store/apps/details?id=com.thortech.clockr&amp;pcampaignid=web_share" target="_blank" rel="noreferrer">Open on Google Play</a>
+                    </article>
                     <article class="resource-card">
                         <h3>GitHub repository</h3>
                         <p>Browse the Android source for the timer flow, Compose UI, Room data layer, settings, and stats.</p>
